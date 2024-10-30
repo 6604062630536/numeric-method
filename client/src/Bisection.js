@@ -11,7 +11,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-
+//Teat naja
 const Bisection = () => {
     const navigate = useNavigate();
     const [data, setData] = useState([]); // ใช้ useState เพื่อเก็บข้อมูล
