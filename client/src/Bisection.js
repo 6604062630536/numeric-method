@@ -63,7 +63,7 @@ const Bisection = () => {
         navigate('/Bisection');
 
         axios.post(
-            `${import.meta.env.REACT_APP_API_URL}/save/rootequation/all`,
+            `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
             {
               equation: Equation
             },
@@ -72,7 +72,7 @@ const Bisection = () => {
                 'Content-Type': 'application/json',
               },
             }
-          )
+        )
 
     };
 

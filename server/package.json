@@ -18,5 +18,8 @@
         "express-timeout-handler": "^2.2.2",
         "helmet": "^7.1.0",
         "mongodb": "^6.9.0"
+    },
+    "devDependencies": {
+        "dotenv": "^16.4.5"
     }
 }
