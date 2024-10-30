@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
-import { Grid, TextField, Button, Typography, MenuItem } from '@mui/material';
-import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import './styles.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Grid, TextField, Button, Typography, MenuItem } from "@mui/material";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import "./styles.css";
+import { useNavigate } from "react-router-dom";
 
 const CalCramerRule = () => {
   const navigate = useNavigate();
   const [matrixSize, setMatrixSize] = useState(3);
-  const [matrix, setMatrix] = useState(Array(matrixSize).fill(0).map(() => Array(matrixSize).fill(0)));
+  const [matrix, setMatrix] = useState(
+    Array(matrixSize)
+      .fill(0)
+      .map(() => Array(matrixSize).fill(0))
+  );
   const [results, setResults] = useState(Array(matrixSize).fill(0));
   const [solution, setSolution] = useState({});
 
@@ -29,7 +33,11 @@ const CalCramerRule = () => {
   // Handle matrix size change
   const handleMatrixSizeChange = (size) => {
     setMatrixSize(size);
-    setMatrix(Array(size).fill(0).map(() => Array(size).fill(0)));
+    setMatrix(
+      Array(size)
+        .fill(0)
+        .map(() => Array(size).fill(0))
+    );
     setResults(Array(size).fill(0));
     setSolution({});
   };
@@ -42,8 +50,10 @@ const CalCramerRule = () => {
 
     let det = 0;
     for (let i = 0; i < size; i++) {
-      const subMatrix = mat.slice(1).map(row => row.filter((_, colIndex) => colIndex !== i));
-      det += ((i % 2 === 0 ? 1 : -1) * mat[0][i] * determinant(subMatrix));
+      const subMatrix = mat
+        .slice(1)
+        .map((row) => row.filter((_, colIndex) => colIndex !== i));
+      det += (i % 2 === 0 ? 1 : -1) * mat[0][i] * determinant(subMatrix);
     }
     return det;
   };
@@ -53,7 +63,7 @@ const CalCramerRule = () => {
     const D = determinant(matrix);
 
     if (D === 0) {
-      alert('No unique solution, determinant is zero');
+      alert("No unique solution, determinant is zero");
       return;
     }
 
@@ -70,13 +80,18 @@ const CalCramerRule = () => {
       newSolution[`x${i + 1}`] = determinants[i] / D;
     }
     setSolution(newSolution);
-    navigate('/CramerRule');
+    navigate("/CramerRule");
   };
 
   return (
     <Container maxWidth="xl" sx={{ p: 2 }}>
       <h2>Cramer's Rule</h2>
-      <Grid container spacing={3} justifyContent="flex-start" alignItems="flex-start">
+      <Grid
+        container
+        spacing={3}
+        justifyContent="flex-start"
+        alignItems="flex-start"
+      >
         {/* Matrix Size Selector */}
         <Grid item xs={12}>
           <TextField
@@ -85,7 +100,7 @@ const CalCramerRule = () => {
             value={matrixSize}
             onChange={(e) => handleMatrixSizeChange(parseInt(e.target.value))}
             variant="outlined"
-            sx={{ width: '150px' }}
+            sx={{ width: "150px" }}
           >
             <MenuItem value={2}>2x2</MenuItem>
             <MenuItem value={3}>3x3</MenuItem>
@@ -105,9 +120,11 @@ const CalCramerRule = () => {
                       label={`a${rowIndex + 1}${colIndex + 1}`}
                       variant="outlined"
                       size="small"
-                      sx={{ m: 1, width: '110px' }}
+                      sx={{ m: 1, width: "110px" }}
                       value={matrix[rowIndex][colIndex]}
-                      onChange={(e) => handleMatrixChange(rowIndex, colIndex, e.target.value)}
+                      onChange={(e) =>
+                        handleMatrixChange(rowIndex, colIndex, e.target.value)
+                      }
                     />
                   </Grid>
                 ))}
@@ -117,15 +134,22 @@ const CalCramerRule = () => {
                     label={`d${rowIndex + 1}`}
                     variant="outlined"
                     size="small"
-                    sx={{ width: '110px' }}
+                    sx={{ width: "110px" }}
                     value={results[rowIndex]}
-                    onChange={(e) => handleResultChange(rowIndex, e.target.value)}
+                    onChange={(e) =>
+                      handleResultChange(rowIndex, e.target.value)
+                    }
                   />
                 </Grid>
               </Grid>
             ))}
 
-            <Button variant="contained" color="primary" onClick={calculateCramer} sx={{ mt: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={calculateCramer}
+              sx={{ mt: 2 }}
+            >
               Calculate
             </Button>
           </Paper>
