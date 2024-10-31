@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Table } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { evaluate } from "mathjs";
@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid";
 import "./styles.css";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useNavigate } from "react-router-dom";
+import ShuffleOnIcon from "@mui/icons-material/ShuffleOn";
 import axios from "axios";
 
 //Teat naja
@@ -69,6 +70,8 @@ const Bisection = () => {
       `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
       {
         equation: Equation,
+        XL: parseFloat(XL),
+        XR: parseFloat(XR),
       },
       {
         headers: {
@@ -77,6 +80,33 @@ const Bisection = () => {
       }
     );
   };
+
+  useEffect(() => {
+    const print = (
+      <Table striped bordered hover variant="dark">
+        <thead>
+          <tr>
+            <th width="10%">Iteration</th>
+            <th width="30%">XL</th>
+            <th width="30%">XM</th>
+            <th width="30%">XR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((element, index) => (
+            <tr key={index}>
+              <td>{element.iteration}</td>
+              <td>{element.Xl}</td>
+              <td>{element.Xm}</td>
+              <td>{element.Xr}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    );
+
+    setHtml(print);
+  }, [data]);
 
   const inputEquation = (event) => {
     setEquation(event.target.value);
@@ -100,32 +130,6 @@ const Bisection = () => {
     }
 
     Calbisection(xlnum, xrnum);
-    setHtml(print());
-  };
-
-  const print = () => {
-    return (
-      <Table striped bordered hover variant="dark">
-        <thead>
-          <tr>
-            <th width="10%">Iteration</th>
-            <th width="30%">XL</th>
-            <th width="30%">XM</th>
-            <th width="30%">XR</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((element, index) => (
-            <tr key={index}>
-              <td>{element.iteration}</td>
-              <td>{element.Xl}</td>
-              <td>{element.Xm}</td>
-              <td>{element.Xr}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    );
   };
 
   return (
@@ -185,6 +189,31 @@ const Bisection = () => {
                 sx={{ backgroundColor: "#3f51b5", color: "#fff" }}
               >
                 Calculate
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#3f51b5",
+                  color: "#fff",
+                  marginLeft: "10px",
+                }}
+                onClick={() => {
+                  axios
+                    .get(
+                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`
+                    )
+                    .then((res) => {
+                      const eq = res.data.equations[0].equation;
+                      const XXL = res.data.equations[0].XL;
+                      const XXR = res.data.equations[0].XR;
+                      setEquation(eq);
+                      setXL(XXL);
+                      setXR(XXR);
+                    });
+                  console.log("Shuffle button clicked!");
+                }}
+              >
+                <ShuffleOnIcon />
               </Button>
             </Form>
           </Paper>

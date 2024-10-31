@@ -65,7 +65,7 @@ const FalsePosition = () => {
     setX(xm);
     setXValues(iterArr); // อัปเดต Iteration สำหรับแกน X
     setErrorData(errorArr); // อัปเดต Error สำหรับแกน Y (กราฟ)
-    navigate("/FalsePostion");
+    navigate("/FalsePosition");
   };
   const inputEquation = (event) => {
     setEquation(event.target.value);
