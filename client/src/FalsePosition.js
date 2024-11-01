@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Table } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { evaluate } from "mathjs";
@@ -9,6 +9,8 @@ import Grid from "@mui/material/Grid";
 import "./styles.css";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useNavigate } from "react-router-dom";
+import ShuffleOnIcon from "@mui/icons-material/ShuffleOn";
+import axios from "axios";
 
 const FalsePosition = () => {
   const navigate = useNavigate();
@@ -66,7 +68,49 @@ const FalsePosition = () => {
     setXValues(iterArr); // อัปเดต Iteration สำหรับแกน X
     setErrorData(errorArr); // อัปเดต Error สำหรับแกน Y (กราฟ)
     navigate("/FalsePosition");
+
+    axios.post(
+      `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
+      {
+        equation: Equation,
+        XL: parseFloat(XL),
+        XR: parseFloat(XR),
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   };
+
+  useEffect(() => {
+    const print = (
+      <Table striped bordered hover variant="dark">
+        <thead>
+          <tr>
+            <th width="10%">Iteration</th>
+            <th width="30%">XL</th>
+            <th width="30%">XM</th>
+            <th width="30%">XR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((element, index) => (
+            <tr key={index}>
+              <td>{element.iteration}</td>
+              <td>{element.Xl}</td>
+              <td>{element.Xm}</td>
+              <td>{element.Xr}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    );
+
+    setHtml(print);
+  }, [data]);
+
   const inputEquation = (event) => {
     setEquation(event.target.value);
   };
@@ -89,33 +133,8 @@ const FalsePosition = () => {
     }
 
     CalFalsePoistion(xlnum, xrnum);
-    setHtml(print());
   };
 
-  const print = () => {
-    return (
-      <Table striped bordered hover variant="dark">
-        <thead>
-          <tr>
-            <th width="10%">Iteration</th>
-            <th width="30%">XL</th>
-            <th width="30%">XM</th>
-            <th width="30%">XR</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((element, index) => (
-            <tr key={index}>
-              <td>{element.iteration}</td>
-              <td>{element.Xl}</td>
-              <td>{element.Xm}</td>
-              <td>{element.Xr}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    );
-  };
   return (
     <Container maxWidth="xl" sx={{ p: 2 }}>
       <h2>False Position Method</h2>
@@ -146,6 +165,7 @@ const FalsePosition = () => {
                 <input
                   type="number"
                   id="XL"
+                  value={XL}
                   onChange={inputXL}
                   style={{
                     width: "100%",
@@ -158,6 +178,7 @@ const FalsePosition = () => {
                 <input
                   type="number"
                   id="XR"
+                  value={XR}
                   onChange={inputXR}
                   style={{
                     width: "100%",
@@ -173,6 +194,31 @@ const FalsePosition = () => {
                 sx={{ backgroundColor: "#3f51b5", color: "#fff" }}
               >
                 Calculate
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#3f51b5",
+                  color: "#fff",
+                  marginLeft: "10px",
+                }}
+                onClick={() => {
+                  axios
+                    .get(
+                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`
+                    )
+                    .then((res) => {
+                      const eq = res.data.equations[0].equation;
+                      const XXL = res.data.equations[0].XL;
+                      const XXR = res.data.equations[0].XR;
+                      setEquation(eq);
+                      setXL(XXL);
+                      setXR(XXR);
+                    });
+                  console.log("Shuffle button clicked!");
+                }}
+              >
+                <ShuffleOnIcon />
               </Button>
             </Form>
           </Paper>

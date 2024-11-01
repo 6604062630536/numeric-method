@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Table } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { evaluate } from "mathjs";
@@ -9,6 +9,8 @@ import Grid from "@mui/material/Grid";
 import "./styles.css";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useNavigate } from "react-router-dom";
+import ShuffleOnIcon from "@mui/icons-material/ShuffleOn";
+import axios from "axios";
 
 const NewtonRaphson = () => {
   const navigate = useNavigate();
@@ -57,6 +59,18 @@ const NewtonRaphson = () => {
     setXValues(iterArr); // อัปเดต Iteration สำหรับแกน X
     setErrorData(errorArr); // อัปเดต Error สำหรับแกน Y (กราฟ)
     navigate("/NewtonRaphson");
+
+    axios.post(
+      `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
+      {
+        equation: Equation,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   };
 
   const inputEquation = (event) => {
@@ -75,11 +89,10 @@ const NewtonRaphson = () => {
     const x0num = parseFloat(X0);
 
     CalNewtonRaphson(x0num);
-    setHtml(print());
   };
 
-  const print = () => {
-    return (
+  useEffect(() => {
+    const print = (
       <Table striped bordered hover variant="dark">
         <thead>
           <tr>
@@ -99,7 +112,9 @@ const NewtonRaphson = () => {
         </tbody>
       </Table>
     );
-  };
+    setHtml(print);
+  }, [data]);
+
   return (
     <Container maxWidth="xl" sx={{ p: 2 }}>
       <h2>Newton Raphson Method</h2>
@@ -154,9 +169,30 @@ const NewtonRaphson = () => {
               <Button
                 variant="contained"
                 onClick={calculateRoot}
-                sx={{ backgroundColor: "#1976d2", color: "#fff" }}
+                sx={{ backgroundColor: "#3f51b5", color: "#fff" }}
               >
                 Calculate
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#3f51b5",
+                  color: "#fff",
+                  marginLeft: "10px",
+                }}
+                onClick={() => {
+                  axios
+                    .get(
+                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`
+                    )
+                    .then((res) => {
+                      const eq = res.data.equations[0].equation;
+                      setEquation(eq);
+                    });
+                  console.log("Shuffle button clicked!");
+                }}
+              >
+                <ShuffleOnIcon />
               </Button>
             </Form>
           </Paper>

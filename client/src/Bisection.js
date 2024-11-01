@@ -162,6 +162,7 @@ const Bisection = () => {
                 <input
                   type="number"
                   id="XL"
+                  value={XL}
                   onChange={inputXL}
                   style={{
                     width: "100%",
@@ -174,6 +175,7 @@ const Bisection = () => {
                 <input
                   type="number"
                   id="XR"
+                  value={XR}
                   onChange={inputXR}
                   style={{
                     width: "100%",
