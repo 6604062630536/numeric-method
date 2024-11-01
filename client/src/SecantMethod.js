@@ -65,8 +65,8 @@ const SecantMethod = () => {
       `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
       {
         equation: Equation,
-        X0: parseFloat(X0),
-        X1: parseFloat(X1),
+        XL: parseFloat(X0),
+        XR: parseFloat(X1),
       },
       {
         headers: {
@@ -187,15 +187,20 @@ const SecantMethod = () => {
                 onClick={() => {
                   axios
                     .get(
-                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`
+                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`,
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                      }
                     )
                     .then((res) => {
                       const eq = res.data.equations[0].equation;
-                      const XX0 = res.data.equations[0].X0;
-                      const XX1 = res.data.equations[0].X1;
+                      const XXL = res.data.equations[0].XL;
+                      const XXR = res.data.equations[0].XR;
                       setEquation(eq);
-                      setX0(XX0);
-                      setX1(XX1);
+                      setX0(XXL);
+                      setX1(XXR);
                     });
                   console.log("Shuffle button clicked!");
                 }}

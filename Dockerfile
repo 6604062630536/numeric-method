@@ -22,7 +22,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy built client files and server files
-COPY --from=client-builder /app/client/dist ./server/public
+COPY --from=client-builder /app/client/build ./server/public
 COPY --from=server-builder /app/server ./server
 WORKDIR /app/server
 RUN npm install --production

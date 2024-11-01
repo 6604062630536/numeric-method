@@ -20,6 +20,7 @@ router.post("/save/rootequation/all", (req, res) => {
     data["XR"] = XR;
     data["XL"] = XL;
   }
+
   console.log(data);
   addDataToDatabase("RootEquation", "All", data);
   return res.status(200).json({ status: "pass" });

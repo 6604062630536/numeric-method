@@ -183,7 +183,13 @@ const NewtonRaphson = () => {
                 onClick={() => {
                   axios
                     .get(
-                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`
+                      `${process.env.REACT_APP_API_URL}/load/rootequation/all`,
+
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                      }
                     )
                     .then((res) => {
                       const eq = res.data.equations[0].equation;
