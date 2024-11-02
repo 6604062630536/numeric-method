@@ -1,16 +1,14 @@
-import React from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
+import React from "react";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 const options = [
-    'Bisection Method' ,
-    'False Position Method' ,
-    'Newton Raphson Method' ,
-    'Secant Method' ,
-    "Cramer's Rule" ,
-    "Newton's Divided Difference" ,
-    "Lagrange's Interpolation"
-
+  "Bisection Method",
+  "False Position Method",
+  "Newton Raphson Method",
+  "Secant Method",
+  "Newton's Divided Difference",
+  "Lagrange's Interpolation",
 ];
 
 const AutocompleteInput = ({ onChange }) => {
@@ -19,11 +17,11 @@ const AutocompleteInput = ({ onChange }) => {
       options={options}
       onChange={onChange}
       renderInput={(params) => (
-        <TextField 
-          {...params} 
-          label="Select Method" 
-          variant="outlined" 
-          sx={{ width: 300 }} 
+        <TextField
+          {...params}
+          label="Select Method"
+          variant="outlined"
+          sx={{ width: 300 }}
         />
       )}
     />
