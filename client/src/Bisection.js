@@ -131,7 +131,7 @@ const Bisection = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ p: 2 }}>
+    <Container maxWidth="xl" sx={{ p: 2, bgcolor: "#f3f5f7" }}>
       <h2>Bisection Method</h2>
       <Grid
         container
