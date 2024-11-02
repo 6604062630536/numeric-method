@@ -65,8 +65,6 @@ const SecantMethod = () => {
       `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
       {
         equation: Equation,
-        XL: parseFloat(X0),
-        XR: parseFloat(X1),
       },
       {
         headers: {
@@ -196,11 +194,8 @@ const SecantMethod = () => {
                     )
                     .then((res) => {
                       const eq = res.data.equations[0].equation;
-                      const XXL = res.data.equations[0].XL;
-                      const XXR = res.data.equations[0].XR;
+
                       setEquation(eq);
-                      setX0(XXL);
-                      setX1(XXR);
                     });
                   console.log("Shuffle button clicked!");
                 }}

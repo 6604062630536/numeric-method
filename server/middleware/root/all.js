@@ -3,7 +3,7 @@ const { addDataToDatabase, loadDataFromDatabase } = require("../../mongo");
 const router = Router();
 
 router.post("/save/rootequation/all", (req, res) => {
-  const { equation, XL, XR } = req.body;
+  const { equation } = req.body;
   console.log(req.body);
 
   if (!equation) {
@@ -16,10 +16,6 @@ router.post("/save/rootequation/all", (req, res) => {
   const data = {
     equation: equation,
   };
-  if (XR && XL) {
-    data["XR"] = XR;
-    data["XL"] = XL;
-  }
 
   console.log(data);
   addDataToDatabase("RootEquation", "All", data);
@@ -31,8 +27,6 @@ router.get("/load/rootequation/all/:limit?", async (req, res) => {
   const equations = await loadDataFromDatabase("RootEquation", "All", limit);
   const newEquations = equations.map((val) => ({
     equation: val.equation,
-    XL: val.XL,
-    XR: val.XR,
   }));
 
   console.log(newEquations);

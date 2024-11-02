@@ -70,8 +70,6 @@ const Bisection = () => {
       `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
       {
         equation: Equation,
-        XL: parseFloat(XL),
-        XR: parseFloat(XR),
       },
       {
         headers: {
@@ -211,11 +209,8 @@ const Bisection = () => {
                     )
                     .then((res) => {
                       const eq = res.data.equations[0].equation;
-                      const XXL = res.data.equations[0].XL;
-                      const XXR = res.data.equations[0].XR;
+
                       setEquation(eq);
-                      setXL(XXL);
-                      setXR(XXR);
                     });
                   console.log("Shuffle button clicked!");
                 }}
