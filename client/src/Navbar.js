@@ -5,7 +5,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 import logo from "./numlogo.png";
-import AutocompleteInput from "./AutocompleteInput"; // Import AutocompleteInput
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -28,9 +27,6 @@ export default function NavBar() {
           >
             Numeric Method
           </Typography>
-          <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-            <AutocompleteInput /> {/* Place AutocompleteInput here */}
-          </Box>
         </Toolbar>
       </AppBar>
     </Box>
