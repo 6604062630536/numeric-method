@@ -14,80 +14,65 @@ import axios from "axios";
 
 const NewtonRaphson = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]); // ใช้ useState เพื่อเก็บข้อมูล
-
+  const [data, setData] = useState([]);
   const [html, setHtml] = useState(null);
   const [Equation, setEquation] = useState("x^2 -7");
   const [Differential, setDifferential] = useState("2*x");
   const [X, setX] = useState(0);
   const [X0, setX0] = useState(0);
 
-  const [errorData, setErrorData] = useState([]); // เก็บค่าของ error
-  const [xValues, setXValues] = useState([]); // ใช้สำหรับ Iteration แสดงบนกราฟ
-
-  const error = (xold, xnew) => Math.abs((xnew - xold) / xnew) * 100;
+  const [fXmData, setFXmData] = useState([]); // เก็บค่า f(Xm) ของแต่ละ Iteration
+  const [xValues, setXValues] = useState([]); // Iteration แสดงบนกราฟ
 
   const CalNewtonRaphson = (x0) => {
     let fX0,
       fXd,
       x1,
-      ea = 100; // Initialize `ea` ให้เริ่มต้นที่ 100
+      fXm,
+      ea = 100;
     let iter = 0;
     const MAX = 50;
     const e = 0.00001;
     const newData = [];
-    const errorArr = []; // สร้าง array เก็บค่า Error แต่ละ Iteration
-    const iterArr = []; // สร้าง array เก็บค่า Iteration เพื่อแสดงบนแกน X
+    const fXmArr = []; // Array เก็บค่า f(Xm)
+    const iterArr = [];
 
     do {
       fX0 = evaluate(Equation, { x: x0 });
       fXd = evaluate(Differential, { x: x0 });
 
       x1 = x0 - fX0 / fXd;
+      fXm = evaluate(Equation, { x: x1 }); // คำนวณ f(Xm) ของแต่ละรอบ Iteration
 
       iter++;
       iterArr.push(iter);
+      fXmArr.push(fXm); // เก็บค่า f(Xm) ในแต่ละรอบ
 
-      ea = error(x0, x1);
+      ea = Math.abs((x1 - x0) / x1) * 100;
       newData.push({ iteration: iter, X0: x0, X1: x1 });
-      errorArr.push(ea); // เก็บค่า Error ของแต่ละ Iteration
+
       x0 = x1;
     } while (ea > e && iter < MAX);
 
-    setData(newData); // อัปเดต data
+    setData(newData);
     setX(x0);
-    setXValues(iterArr); // อัปเดต Iteration สำหรับแกน X
-    setErrorData(errorArr); // อัปเดต Error สำหรับแกน Y (กราฟ)
+    setXValues(iterArr);
+    setFXmData(fXmArr); // อัปเดตค่า f(Xm) สำหรับกราฟ
     navigate("/NewtonRaphson");
 
     axios.post(
       `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
-      {
-        equation: Equation,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { equation: Equation },
+      { headers: { "Content-Type": "application/json" } }
     );
   };
 
-  const inputEquation = (event) => {
-    setEquation(event.target.value);
-  };
-
-  const inputDifferential = (event) => {
-    setDifferential(event.target.value);
-  };
-
-  const inputX0 = (event) => {
-    setX0(event.target.value);
-  };
+  const inputEquation = (event) => setEquation(event.target.value);
+  const inputDifferential = (event) => setDifferential(event.target.value);
+  const inputX0 = (event) => setX0(event.target.value);
 
   const calculateRoot = () => {
     const x0num = parseFloat(X0);
-
     CalNewtonRaphson(x0num);
   };
 
@@ -134,11 +119,7 @@ const NewtonRaphson = () => {
                   id="equation"
                   value={Equation}
                   onChange={inputEquation}
-                  style={{
-                    width: "100%",
-                    margin: "0 auto",
-                    marginBottom: "20px",
-                  }}
+                  style={{ width: "100%", marginBottom: "20px" }}
                   className="form-control"
                 />
                 <Form.Label>INPUT f'(X)</Form.Label>
@@ -146,11 +127,7 @@ const NewtonRaphson = () => {
                   type="text"
                   id="Differential"
                   onChange={inputDifferential}
-                  style={{
-                    width: "100%",
-                    margin: "0 auto",
-                    marginBottom: "20px",
-                  }}
+                  style={{ width: "100%", marginBottom: "20px" }}
                   className="form-control"
                 />
                 <Form.Label>INPUT X0</Form.Label>
@@ -158,11 +135,7 @@ const NewtonRaphson = () => {
                   type="number"
                   id="X0"
                   onChange={inputX0}
-                  style={{
-                    width: "100%",
-                    margin: "0 auto",
-                    marginBottom: "20px",
-                  }}
+                  style={{ width: "100%", marginBottom: "20px" }}
                   className="form-control"
                 />
               </Form.Group>
@@ -184,7 +157,6 @@ const NewtonRaphson = () => {
                   axios
                     .get(
                       `${process.env.REACT_APP_API_URL}/load/rootequation/all`,
-
                       {
                         headers: {
                           "Content-Type": "application/json",
@@ -193,6 +165,7 @@ const NewtonRaphson = () => {
                     )
                     .then((res) => {
                       const eq = res.data.equations[0].equation;
+
                       setEquation(eq);
                     });
                   console.log("Shuffle button clicked!");
@@ -207,8 +180,8 @@ const NewtonRaphson = () => {
               xAxis={[{ data: xValues || [] }]} // Iteration เป็นแกน X
               series={[
                 {
-                  data: errorData || [], // Error เป็นแกน Y
-                  label: "Error per Iteration",
+                  data: fXmData || [], // f(Xm) เป็นแกน Y
+                  label: "f(Xm) per Iteration",
                   type: "line",
                 },
               ]}

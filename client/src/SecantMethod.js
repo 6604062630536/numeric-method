@@ -22,10 +22,8 @@ const SecantMethod = () => {
   const [X0, setX0] = useState(0);
   const [X1, setX1] = useState(0);
 
-  const [errorData, setErrorData] = useState([]);
-  const [xValues, setXValues] = useState([]);
-
-  const error = (xold, xnew) => Math.abs((xnew - xold) / xnew) * 100;
+  const [fxmData, setFxmData] = useState([]); // Store f(Xm) values for each iteration
+  const [xValues, setXValues] = useState([]); // Iteration numbers for the X-axis
 
   const CalSeccant = (x0, x1) => {
     let fX0,
@@ -36,7 +34,7 @@ const SecantMethod = () => {
     const MAX = 50;
     const e = 0.00001;
     const newData = [];
-    const errorArr = [];
+    const fxmArr = []; // Array to store f(Xm) values
     const iterArr = [];
 
     do {
@@ -48,9 +46,8 @@ const SecantMethod = () => {
       iter++;
       iterArr.push(iter);
 
-      ea = error(x0, x1);
       newData.push({ iteration: iter, X0: x0, X1: x1, X2: x2 });
-      errorArr.push(ea); // เก็บค่า Error ของแต่ละ Iteration
+      fxmArr.push(evaluate(Equation, { x: x2 })); // Store f(Xm) at x2
       x0 = x1;
       x1 = x2;
     } while (ea > e && iter < MAX);
@@ -58,7 +55,7 @@ const SecantMethod = () => {
     setData(newData);
     setX(x2);
     setXValues(iterArr);
-    setErrorData(errorArr);
+    setFxmData(fxmArr); // Update f(Xm) values for the chart
     navigate("/SecantMethod");
 
     axios.post(
@@ -73,6 +70,7 @@ const SecantMethod = () => {
       }
     );
   };
+
   useEffect(() => {
     const print = (
       <Table striped bordered hover variant="dark">
@@ -98,6 +96,7 @@ const SecantMethod = () => {
     );
     setHtml(print);
   }, [data]);
+
   const inputEquation = (event) => {
     setEquation(event.target.value);
   };
@@ -206,11 +205,11 @@ const SecantMethod = () => {
           </Paper>
           <Paper elevation={2}>
             <LineChart
-              xAxis={[{ data: xValues || [] }]} // Iteration เป็นแกน X
+              xAxis={[{ data: xValues || [] }]} // Iteration as X-axis
               series={[
                 {
-                  data: errorData || [], // Error เป็นแกน Y
-                  label: "Error per Iteration",
+                  data: fxmData || [], // f(Xm) as Y-axis
+                  label: "f(Xm) per Iteration",
                   type: "line",
                 },
               ]}
@@ -230,4 +229,5 @@ const SecantMethod = () => {
     </Container>
   );
 };
+
 export default SecantMethod;
