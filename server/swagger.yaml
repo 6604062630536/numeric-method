@@ -10,8 +10,8 @@ servers:
 paths:
   /save/rootequation/all:
     post:
-      summary: Save equation, Xl , Xr of root equation
-      description: Saves root equations (for example, 43x-7 , Xl = 2 , Xr = 4) that the user enters into the database. 
+      summary: Save equation  of root equation
+      description: Saves root equations (for example, 43x-7 ) that the user enters into the database.
       requestBody:
         required: true
         content:
@@ -26,7 +26,7 @@ paths:
                 - equation
       responses:
         "200":
-          description: Equation , Xl , Xr saved successfully
+          description: Equation saved successfully
           content:
             application/json:
               schema:

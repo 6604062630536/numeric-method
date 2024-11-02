@@ -37,8 +37,9 @@ const FalsePosition = () => {
     const MAX = 50;
     const e = 0.00001;
     const newData = [];
-    const errorArr = []; // สร้าง array เก็บค่า Error แต่ละ Iteration
-    const iterArr = []; // สร้าง array เก็บค่า Iteration เพื่อแสดงบนแกน X
+    const fXmArr = []; // สร้าง array เก็บค่า f(Xm)
+    const xlArr = []; // สร้าง array เก็บค่า XL
+    const xrArr = []; // สร้าง array เก็บค่า XR
 
     do {
       fXr = evaluate(Equation, { x: xr });
@@ -48,25 +49,27 @@ const FalsePosition = () => {
       fXm = evaluate(Equation, { x: xm });
 
       iter++;
-      iterArr.push(iter);
+
+      // บันทึกค่า f(Xm), XL, XR สำหรับกราฟ
+      fXmArr.push(fXm);
+      xlArr.push(xl);
+      xrArr.push(xr);
 
       if (fXm * fXr > 0) {
         ea = error(xr, xm);
         newData.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
-        errorArr.push(ea); // เก็บค่า Error ของแต่ละ Iteration
         xr = xm;
       } else if (fXm * fXr < 0) {
         ea = error(xl, xm);
         newData.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
-        errorArr.push(ea); // เก็บค่า Error ของแต่ละ Iteration
         xl = xm;
       }
     } while (ea > e && iter < MAX);
 
-    setData(newData); // อัปเดต data
+    setData(newData);
     setX(xm);
-    setXValues(iterArr); // อัปเดต Iteration สำหรับแกน X
-    setErrorData(errorArr); // อัปเดต Error สำหรับแกน Y (กราฟ)
+    setXValues(xlArr); // อัปเดตแกน X เป็น XL
+    setErrorData(fXmArr); // อัปเดตแกน Y เป็น f(Xm)
     navigate("/FalsePosition");
 
     axios.post(
@@ -224,11 +227,11 @@ const FalsePosition = () => {
           </Paper>
           <Paper elevation={2}>
             <LineChart
-              xAxis={[{ data: xValues || [] }]} // Iteration เป็นแกน X
+              xAxis={[{ data: xValues || [] }]} // ใช้ XL เป็นแกน X
               series={[
                 {
-                  data: errorData || [], // Error เป็นแกน Y
-                  label: "Error per Iteration",
+                  data: errorData || [], // ใช้ f(Xm) เป็นแกน Y
+                  label: "f(Xm) per XL",
                   type: "line",
                 },
               ]}
