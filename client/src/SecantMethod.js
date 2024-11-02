@@ -22,8 +22,9 @@ const SecantMethod = () => {
   const [X0, setX0] = useState(0);
   const [X1, setX1] = useState(0);
 
-  const [fxmData, setFxmData] = useState([]); // Store f(Xm) values for each iteration
-  const [xValues, setXValues] = useState([]); // Iteration numbers for the X-axis
+  const [xValues, setXValues] = useState([]); // For X value per iteration
+
+  const error = (xold, xnew) => Math.abs((xnew - xold) / xnew) * 100;
 
   const CalSeccant = (x0, x1) => {
     let fX0,
@@ -34,8 +35,7 @@ const SecantMethod = () => {
     const MAX = 50;
     const e = 0.00001;
     const newData = [];
-    const fxmArr = []; // Array to store f(Xm) values
-    const iterArr = [];
+    const xArr = []; // Array for X values
 
     do {
       fX0 = evaluate(Equation, { x: x0 });
@@ -44,30 +44,24 @@ const SecantMethod = () => {
       x2 = x1 - (fX1 * (x1 - x0)) / (fX1 - fX0);
 
       iter++;
-      iterArr.push(iter);
+      xArr.push(x2); // Store each X value
 
+      ea = error(x0, x1);
       newData.push({ iteration: iter, X0: x0, X1: x1, X2: x2 });
-      fxmArr.push(evaluate(Equation, { x: x2 })); // Store f(Xm) at x2
+
       x0 = x1;
       x1 = x2;
     } while (ea > e && iter < MAX);
 
     setData(newData);
     setX(x2);
-    setXValues(iterArr);
-    setFxmData(fxmArr); // Update f(Xm) values for the chart
+    setXValues(xArr); // Update X values for chart
     navigate("/SecantMethod");
 
     axios.post(
       `${process.env.REACT_APP_API_URL}/save/rootequation/all`,
-      {
-        equation: Equation,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { equation: Equation },
+      { headers: { "Content-Type": "application/json" } }
     );
   };
 
@@ -193,7 +187,6 @@ const SecantMethod = () => {
                     )
                     .then((res) => {
                       const eq = res.data.equations[0].equation;
-
                       setEquation(eq);
                     });
                   console.log("Shuffle button clicked!");
@@ -205,11 +198,15 @@ const SecantMethod = () => {
           </Paper>
           <Paper elevation={2}>
             <LineChart
-              xAxis={[{ data: xValues || [] }]} // Iteration as X-axis
+              xAxis={[
+                {
+                  data: Array.from({ length: xValues.length }, (_, i) => i + 1),
+                },
+              ]} // Iteration เป็นแกน X
               series={[
                 {
-                  data: fxmData || [], // f(Xm) as Y-axis
-                  label: "f(Xm) per Iteration",
+                  data: xValues || [], // X value เป็นแกน Y
+                  label: "X value per Iteration",
                   type: "line",
                 },
               ]}
