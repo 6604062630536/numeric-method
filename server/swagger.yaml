@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Mathematical Operations API
+  description: API for handling various mathematical operations including root equations, linear algebra, and interpolation
+  version: 1.0.0
+
+servers:
+  - url: /api
+
+paths:
+  /save/rootequation/all:
+    post:
+      summary: Save equation  of root equation
+      description: Saves root equations (for example, 43x-7 ) that the user enters into the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                equation:
+                  type: string
+                  description: The equation to be saved (should not contain special characters like '"{}[]=&%#@!')
+              required:
+                - equation
+      responses:
+        "200":
+          description: Equation saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "pass"
+        "400":
+          description: Bad request or invalid value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  error:
+                    type: string
+                    example: "Bad Request"
+
+  /load/rootequation/all/{limit}:
+    get:
+      summary: Load root of equations
+      description: Extract a limited number of random root equations from the database.
+      parameters:
+        - in: path
+          name: limit
+          schema:
+            type: integer
+            default: 1
+          required: false
+          description: Number of equations to retrieve
+      responses:
+        "200":
+          description: Equations retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "pass"
+                  equations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        equation:
+                          type: string
+
+components:
+  schemas: {}
